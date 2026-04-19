@@ -1,1 +1,15 @@
+body {
+    font-family: Arial;
+    text-align: center;
+    padding: 40px;
+}
 
+textarea {
+    width: 300px;
+    height: 100px;
+}
+
+#response {
+    margin-top: 20px;
+    font-weight: bold;
+}
