@@ -1,36 +1,20 @@
-async function sendMessage() {
-    const inputBox = document.getElementById("userInput");
-    const chatBox = document.getElementById("chatBox");
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FutureMe AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    const input = inputBox.value;
+    <h1>🧠 FutureMe AI</h1>
 
-    if (!input) return;
+    <div id="chatBox"></div>
 
-    chatBox.innerHTML += `<p><b>You:</b> ${input}</p>`;
+    <input type="text" id="userInput" placeholder="Ask your future self..." />
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="resetChat()">Reset</button>
 
-    inputBox.value = "";
+    <script src="script.js"></script>
 
-    const response = await fetch("/chat", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: input })
-    });
-
-    const data = await response.json();
-
-    chatBox.innerHTML += `
-        <p><b>Future You:</b> ${data.response}</p>
-        <small>⏱ ${data.response_time}s</small>
-    `;
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-
-async function resetChat() {
-    await fetch("/reset", { method: "POST" });
-
-    document.getElementById("chatBox").innerHTML = "";
-}
+</body>
+</html>
