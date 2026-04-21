@@ -1,15 +1,24 @@
 body {
     font-family: Arial;
     text-align: center;
-    padding: 40px;
 }
 
-textarea {
-    width: 300px;
-    height: 100px;
+#chatBox {
+    width: 60%;
+    height: 300px;
+    margin: auto;
+    border: 1px solid black;
+    overflow-y: auto;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-#response {
-    margin-top: 20px;
-    font-weight: bold;
+input {
+    width: 50%;
+    padding: 10px;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
 }
