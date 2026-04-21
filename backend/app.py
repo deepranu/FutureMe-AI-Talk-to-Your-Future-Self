@@ -1,57 +1,3 @@
-# from flask import Flask, request, jsonify
-# import openai
-# import os
-# from dotenv import load_dotenv
-# from flask_cors import CORS
-
-# load_dotenv()
-
-# app = Flask(__name__)
-# CORS(app)
-
-# openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# @app.route("/chat", methods=["POST"])
-# def chat():
-#     user_input = request.json.get("message")
-
-#     prompt = f"""
-#     You are the future version of the user.
-#     The user says: {user_input}
-
-#     Respond like a wiser, more experienced version of them.
-#     Give advice, reflection, and motivation.
-#     """
-
-#     response = openai.ChatCompletion.create(
-#         model="gpt-4o-mini",
-#         messages=[{"role": "user", "content": prompt}]
-#     )
-
-#     reply = response.choices[0].message.content
-
-#     return jsonify({"response": reply})
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import openai
@@ -60,12 +6,13 @@ import time
 app = Flask(__name__)
 CORS(app)
 
+# 🔑 Add your API key
 openai.api_key = "YOUR_OPENAI_API_KEY"
 
 # 🧠 Chat memory
 chat_history = []
 
-# 🎯 System prompt (improved)
+# 🎯 Future Self Personality
 SYSTEM_PROMPT = {
     "role": "system",
     "content": """
@@ -77,14 +24,14 @@ SYSTEM_PROMPT = {
     - Give actionable advice
     - Mention consequences of decisions
 
-    Format your response like:
+    Format:
     1. Reflection
     2. Advice
     3. Reality Check
     """
 }
 
-# ⚡ Retry logic (handles API failures)
+# ⚡ Retry logic (handles API errors)
 def call_openai(messages, retries=2):
     for attempt in range(retries):
         try:
@@ -99,15 +46,15 @@ def call_openai(messages, retries=2):
             print(f"Retry {attempt+1} failed:", e)
             time.sleep(1)
 
-    return "⚠️ API is busy. Please try again later."
+    return "⚠️ API is busy. Try again."
 
 
-# 🧹 Input preprocessing
+# 🧹 Clean input
 def clean_input(text):
     return text.strip()
 
 
-# 🧹 Output post-processing
+# 🧹 Clean output
 def clean_output(text):
     return text.strip()
 
@@ -122,32 +69,31 @@ def chat():
     if not user_input:
         return jsonify({"response": "Please enter a message"}), 400
 
-    # 🧹 Clean input
+    # Clean input
     user_input = clean_input(user_input)
 
-    # Add user message
+    # Save user message
     chat_history.append({"role": "user", "content": user_input})
 
-    # Prepare messages
     messages = [SYSTEM_PROMPT] + chat_history
 
     start_time = time.time()
 
-    # ⚡ Call API with retry
+    # Call API
     reply = call_openai(messages)
 
     end_time = time.time()
 
-    # 🧹 Clean output
+    # Clean output
     reply = clean_output(reply)
 
-    # Save response
+    # Save AI response
     chat_history.append({"role": "assistant", "content": reply})
 
-    # 📊 Logging (for evaluation)
+    # 📊 Logs (for Day 4 evaluation)
     print("User:", user_input)
     print("AI:", reply)
-    print("Response Time:", round(end_time - start_time, 2), "sec")
+    print("Time:", round(end_time - start_time, 2), "sec")
 
     return jsonify({
         "response": reply,
@@ -160,7 +106,7 @@ def chat():
 def reset_chat():
     global chat_history
     chat_history = []
-    return jsonify({"message": "Chat reset successful"})
+    return jsonify({"message": "Chat reset"})
 
 
 if __name__ == "__main__":
