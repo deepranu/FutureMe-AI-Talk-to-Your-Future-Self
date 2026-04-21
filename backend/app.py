@@ -1,18 +1,23 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import openai
 import time
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-# 🔑 Add your OpenAI API key
-openai.api_key = "YOUR_OPENAI_API_KEY"
+# 🔐 Secure API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # 🧠 Memory
 chat_history = []
 
-# 🎯 Future Self Prompt
+# 🎯 System Prompt
 SYSTEM_PROMPT = {
     "role": "system",
     "content": """
@@ -31,7 +36,7 @@ SYSTEM_PROMPT = {
     """
 }
 
-# ⚡ API Retry Logic
+# ⚡ Retry logic
 def call_openai(messages, retries=2):
     for attempt in range(retries):
         try:
@@ -46,22 +51,17 @@ def call_openai(messages, retries=2):
             print(f"Retry {attempt+1} failed:", e)
             time.sleep(1)
 
-    return "⚠️ API busy. Try again later."
+    return "⚠️ API is busy. Try again later."
 
 
-# 🧹 Input Clean
+# 🧹 Clean input
 def clean_input(text):
     return text.strip()
 
 
-# 🧹 Output Clean
+# 🧹 Clean output
 def clean_output(text):
     return text.strip()
-
-
-@app.route("/")
-def home():
-    return render_template("index.html")
 
 
 @app.route("/chat", methods=["POST"])
@@ -104,7 +104,7 @@ def chat():
 def reset_chat():
     global chat_history
     chat_history = []
-    return jsonify({"message": "Chat reset"})
+    return jsonify({"message": "Chat reset successful"})
 
 
 if __name__ == "__main__":
